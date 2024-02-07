@@ -14,6 +14,7 @@ type TResponse = {
 function App() {
 	const genRef = useRef<AsyncGenerator<TResponse | { error: unknown }, never, number>>();
 	const [data, setData] = useState({} as TResponse);
+	const [btnCount, setBtnCount] = useState(0);
 
 	useEffect(() => {
 		genRef.current = asyncGetContent(1);
@@ -45,8 +46,13 @@ function App() {
 
 	const genFn = useCallback(async (page: number = 1) => {
 		if (genRef.current) {
-			const data = await genRef.current.next(page);
-			setData(data.value as TResponse);
+			const resp = await genRef.current.next(page);
+			const data = resp.value as TResponse;
+			setData(data);
+			if(page === 1) {
+				const totalBtn = Math.ceil(data.totalItems / data.itemsPerPage);
+				setBtnCount(totalBtn);
+			}
 			return data;
 		}
 	}, []);
@@ -61,18 +67,19 @@ function App() {
 				{data.items ? data.items.map((v) => <li key={v}>{v}</li>) : null}
 			</ul>
 			<br />
-			<Buttons changePage={changePage} />
+			<Buttons changePage={changePage} btnCount={btnCount} />
 		</div>
 	);
 }
 
 type PropsType = {
 	changePage: (id: number) => void;
+	btnCount: number;
 };
-function Buttons({ changePage }: PropsType) {
+function Buttons({ changePage, btnCount }: PropsType) {
 	const buttons = [];
 
-	for (let i = 1; i <= 25; i++) {
+	for (let i = 1; i <= btnCount; i++) {
 		buttons.push(
 			<button onClick={(e) => changePage(+e.currentTarget.value)} key={'btn-' + i} value={i}>
 				{i}

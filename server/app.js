@@ -12,17 +12,19 @@ app.use(
 
 app.use(express.json());
 
+const itemsPerPage = 15
+
 app.get('/api/list', (req, res) => {
 	const { nextPage } = req.query;
 	let start = 0;
   let nextPageValue = 2;
 
 	if (nextPage && parseInt(nextPage) > 0) {
-		start = (nextPage - 1) * 20;
+		start = (nextPage - 1) * itemsPerPage;
     nextPageValue = parseInt(nextPage) + 1;
 	}
 
-	const end = start + 20;
+	const end = start + itemsPerPage;
 
 	let hasNext = true;
 	if (end >= list.length) {
@@ -39,7 +41,7 @@ app.get('/api/list', (req, res) => {
 		totalItems: 500,
 		hasNextPage: hasNext,
 		nextPage: nextPageValue,
-    itemsPerPage: 20
+    itemsPerPage
 	});
 });
 
