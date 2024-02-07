@@ -1,3 +1,5 @@
+## If you find this helpful, kindly give it a ⭐. Follow me for more apps focused on small topics like this one.
+
 ## Step-1: Cloning
 clone the repo
 
